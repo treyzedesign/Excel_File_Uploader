@@ -1,0 +1,62 @@
+﻿@using System.Linq;
+@using Newtonsoft.Json;
+@{
+}
+@{
+    // var dat1 = JsonConvert.DeserializeObject(ViewBag.json);
+    // var data = dat1 as IEnumerable<dynamic>;
+    var jsonString = ViewBag.json as string;
+    var data = jsonString != null ? JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(jsonString) : null;
+}
+<style>
+    .t_box {
+        width: 95%;
+        margin: 0 auto;
+        overflow-x: scroll
+    }
+</style>
+
+<div class="t_box">
+    @if (data != null)
+    {
+        <table class=" display nowrap table table-striped-columns mx-7">
+            <thead>
+                <tr>
+                    <th>sn</th>
+
+                    @foreach (var key in data.First().Keys)
+                    {
+                        <th>@key.ToString().Trim()</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < data.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+
+                        @foreach (var kvp in data[i])
+                        {
+                            <td>@(kvp.Value != " " ? @kvp.Value : "N/A")</td>
+
+
+                        }
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Excel data available.</p>
+    }
+</div>
+
+
+<script>
+    var excelData = @Html.Raw(ViewBag.json)
+        console.log(excelData)
+</script>

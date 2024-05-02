@@ -1,0 +1,44 @@
+﻿@model LoginDto
+@{
+}
+
+@{
+    ViewData["Title"] = "login";
+}
+<div style="width:30%; margin:10vh auto" class="shadow-lg px-md-3 py-lg-5 rounded-3">
+    <div class="w-full">
+        <div class="text-center">
+            <h1>Login</h1>
+            <p>Please fill in the following form to Login:</p>
+        </div>
+        
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li class="text-danger text-sm-center">@error.ErrorMessage</li>
+            }
+        </ul>
+        <form method="post" class="w-full">
+            <div>
+                <label asp-for="email">email:</label>
+                <input asp-for="email" class=" form-control" />
+                <span asp-validation-for="email" class="text-danger text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="password">Password:</label>
+                <input asp-for="password" type="password" class="form-control" />
+                <span asp-validation-for="password" class="text-danger text-sm"></span>
+            </div>
+            <button type="submit" class="btn form-control btn-primary mt-2">Login</button>
+
+        </form>
+        <div class="text-center pt-2">
+            <small>don't have an account? <span><a class="text-link" asp-area="" asp-controller="Auth" asp-action="Register">Register</a></span></small>
+        </div>
+    </div>
+</div>
+
+              @*   <script>
+                    var error = @Html.Raw(ViewData.ModelState.Values.SelectMany(v=> v.Errors))
+                    console.log(error)
+                </script> *@

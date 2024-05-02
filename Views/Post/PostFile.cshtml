@@ -1,0 +1,31 @@
+﻿@{
+    string data = ViewBag.message;
+    var token = TempData["token"];
+}
+
+<style>
+
+</style>
+<h2>Upload Excel File</h2>
+@if(data != null)
+{
+    <div>@data</div>
+}
+<div>
+    @using (Html.BeginForm("PostFile", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div>
+            <label for="file">Select Excel File:</label>
+            <input class="form-control w-50" type="file" name="file" />
+            <input class="btn btn-primary" type="submit" value="view" />
+        </div>
+    }
+</div>
+
+<div>
+    @Html.Partial("/views/Post/Index.cshtml")
+</div>
+
+<script>
+    console.log("@token")
+</script>
