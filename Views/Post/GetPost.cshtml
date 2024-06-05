@@ -1,0 +1,294 @@
+﻿@using Newtonsoft.Json.Linq
+@{
+    var data = ViewBag.PostData;
+}
+
+
+<style>
+    .t_box {
+        width: 95%;
+        margin: 0 auto;
+        overflow-x: scroll
+    }
+</style>
+
+<div class="w-100 h-25 position-relative d-flex justify-content-end">
+    <input type="text" name="name" value="" class="form-control-sm filename" placeholder="file name" />
+    <button class="btn btn-outline-primary " id="export">Export</button>
+</div>
+<div class="text-center py-5">
+    <h1>USERS</h1>
+</div>
+
+@*< div class="m-0 m-auto w-75">
+    <input type="text" id="searchbar" class="form-control w-100 h5" placeholder="search by enrollment-No., email, phone number" />
+
+</div>
+<div class="t_box border border-grey rounded-3 shadow-lg py-2 px-3">
+    @if (data != null && data.Count > 0)
+    {
+        <div class="d-flex justify-content-end">
+            <button class="text-right button btn-outline-primary btn">delete</button>
+        </div>
+        <table class=" display nowrap table text-center table-striped-columns mx-7" id="myTable">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" name="checkall" id="check-all"/></th>
+
+                    @foreach (var key in ((JObject)data[0]).Properties().Select(p => p.Name))
+                    {
+                        <th>@key.Trim()</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < data.Count; i++)
+                {
+                    <tr class="table_body_row">
+                        <th><input type="checkbox" name="checker" id="checker" /></th>
+
+                        @foreach (var kvp in data[i])
+                        {
+                            <td>@(string.IsNullOrWhiteSpace(kvp.Value?.ToString()) ? "N/A" : kvp.Value)</td>
+
+
+                        }
+
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Excel data available.</p>
+    }
+</div>
+<div class="w-100 d-flex justify-content-end pt-5">
+    <div class=" text-center pagination"></div>
+</div> *@
+<table id="example" class="table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Age</th>
+            <th>Start date</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Tiger Nixon</td>
+            <td>System Architect</td>
+            <td>Edinburgh</td>
+            <td>61</td>
+            <td>2011-04-25</td>
+            <td>$320,800</td>
+        </tr>
+        <tr>
+            <td>Garrett Winters</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>63</td>
+            <td>2011-07-25</td>
+            <td>$170,750</td>
+        </tr>
+        <tr>
+            <td>Ashton Cox</td>
+            <td>Junior Technical Author</td>
+            <td>San Francisco</td>
+            <td>66</td>
+            <td>2009-01-12</td>
+            <td>$86,000</td>
+        </tr>
+        <tr>
+            <td>Cedric Kelly</td>
+            <td>Senior Javascript Developer</td>
+            <td>Edinburgh</td>
+            <td>22</td>
+            <td>2012-03-29</td>
+            <td>$433,060</td>
+        </tr>
+        <tr>
+            <td>Airi Satou</td>
+            <td>Accountant</td>
+            <td>Tokyo</td>
+            <td>33</td>
+            <td>2008-11-28</td>
+            <td>$162,700</td>
+        </tr>
+        <tr>
+            <td>Brielle Williamson</td>
+            <td>Integration Specialist</td>
+            <td>New York</td>
+            <td>61</td>
+            <td>2012-12-02</td>
+            <td>$372,000</td>
+        </tr>
+        <tr>
+            <td>Herrod Chandler</td>
+            <td>Sales Assistant</td>
+            <td>San Francisco</td>
+            <td>59</td>
+            <td>2012-08-06</td>
+            <td>$137,500</td>
+        </tr>
+        </tbody>
+        </table>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js"></script>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/2.0.7/js/dataTables.bootstrap5.js"></script>
+
+
+<script>
+    console.log(@Html.Raw(ViewBag.PostData))
+    $(document).ready(function () {
+        $('#example').DataTable();
+        // $(".button").hide();
+        // let checkedIds = [];
+
+        // function storeCheckIds(checkedIds) {
+         
+        //     if (checkedIds.length > 0) {
+        //         $(".button").show();
+
+        //     } else {
+        //         $(".button").hide();
+        //     }
+        // }
+        //  $("#check-all").click(function() {
+        //     let checkedIds = [];
+        //     $("input:checkbox[name=checker]").prop("checked", $(this).prop("checked")).each(function () {
+        //         let itemId = $(this).closest('tr').find('td:nth-child(2)').text().toString().trim();
+        //         checkedIds.push(itemId);
+        //         storeCheckIds(checkedIds)
+
+        //     });
+        // });
+        // $("input:checkbox[name=checker]").change(function () {
+        //     let checkedIds = [];
+        //     $("input:checkbox[name=checker]:checked").each(function () {
+        //         let itemId = $(this).closest('tr').find('td:nth-child(2)').text().toString().trim();
+        //         checkedIds.push(itemId); 
+        //         storeCheckIds(checkedIds)
+
+        //     });    
+        // });
+
+        // // $("input:checkbox[name=checkall]").change(()=>{
+        // //     if ($(this).prop("checked")) {
+        // //         $("input:checkbox[name=checker]").prop("checked", true);
+        // //     } else {
+        // //         $("input:checkbox[name=checker]").prop("checked", false);
+        // //     }
+        // // })
+
+        // $(".button").click(() => {
+        //     let checked = [];
+
+        //     $("input:checkbox[name=checker]:checked").each(function () {
+        //         let itemId = $(this).closest('tr').find('td:nth-child(2)').text();
+        //         checked.push(itemId);
+        //     });
+        //     console.log(checked)
+        //     if (checked.length == 0) {
+        //         console.log("empty array")
+        //     }else{
+        //         $.ajax({
+        //             type: "DELETE",
+        //             url: "@Url.Action("DeleteUser", "Post")", 
+        //             data: JSON.stringify(checked), 
+        //             contentType: "application/json",
+        //             success: function (response) {
+        //                 console.log(response);
+        //                 window.location.reload()
+        //             },
+        //             error: function (xhr, status, error) {
+        //                 console.log(error);
+        //             }
+        //         });
+        //     }
+            
+        // });
+        // console.log(checkedIds)
+
+        // $("#searchbar").keyup(function () {
+        //     var searchText = $(this).val().toLowerCase();
+        //     $(".table_body_row").each(function () {
+        //         var E_No = $(this).find('td:nth-child(33)').text().toLowerCase();
+        //         var phone = $(this).find('td:nth-child(12)').text().toLowerCase();
+        //         var email = $(this).find('td:nth-child(14)').text().toLowerCase();
+        //         if (E_No.includes(searchText) || phone.includes(searchText) || email.includes(searchText)) {
+        //             $(this).show();
+        //         } else {
+        //             $(this).hide();
+        //         }
+        //     });
+        // });
+
+
+        // var itemsPerPage = 10;
+        // var currentPage = 1;
+
+        // function showPage(page) {
+        //     $('#myTable tbody tr').hide();
+        //     $('#myTable tbody tr').slice((page - 1) * itemsPerPage, page * itemsPerPage).show();
+        // }
+        // showPage(currentPage)
+
+        // var totalPages = Math.ceil($('#myTable tbody tr').length / itemsPerPage)
+
+        // var paginationHtml = '<button id="prevPage" class=" btn btn-primary">Previous</button>';
+        // for (var i = 1; i <= totalPages; i++) {
+        //     paginationHtml += '<button class="pageLink" class="btn-outline-primary btn">' + i + '</button>';
+        // }
+        // paginationHtml += '<button id="nextPage" class="btn btn-primary">Next</button>';
+        // $('.pagination').html(paginationHtml);
+
+        // $('.pagination').on('click', '.pageLink', function () {
+        //     currentPage = parseInt($(this).text());
+        //     showPage(currentPage);
+        // });
+
+        // $('#prevPage').click(function () {
+        //     if (currentPage > 1) {
+        //         currentPage--;
+        //         showPage(currentPage);
+        //     }
+        // });
+
+        // $('#nextPage').click(function () {
+        //     if (currentPage < totalPages) {
+        //         currentPage++;
+        //         showPage(currentPage);
+        //     }
+        // });
+
+        // $("#export").click(() => {
+        //     let filename = $(".filename").val();
+        //     if (filename.length == 0) {
+        //         alert("please enter a name");
+        //     } else {
+        //         const data = XLSX.utils.json_to_sheet(@Html.Raw(ViewBag.PostData))
+        //         const workbook = XLSX.utils.book_new();
+        //         XLSX.utils.book_append_sheet(workbook, data, "Sheet1");
+        //         const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        //         const blobs = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+        //         console.log(blobs)
+        //         saveAs(blobs, `${filename}.xlsx`)
+        //     }
+               
+        // })
+    });
+</script>
+
+
+<script>
+
+</script>

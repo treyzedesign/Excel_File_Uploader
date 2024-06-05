@@ -17,7 +17,10 @@
         <div>
             <label for="file">Select Excel File:</label>
             <input class="form-control w-50" type="file" name="file" />
-            <input class="btn btn-primary" type="submit" value="view" />
+            <input class="btn btn-primary" type="submit" value="post" />
+        </div>
+        <div>
+           <button asp-controller="Post" asp-action="GetPost">View Users</button>
         </div>
     }
 </div>

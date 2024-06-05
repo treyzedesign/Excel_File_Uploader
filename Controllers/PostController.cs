@@ -7,6 +7,8 @@ using System.Text;
 using OfficeOpenXml.Packaging.Ionic.Zlib;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using System.Net.Http.Headers;
+using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Uploader_Web.Controllers
 {
@@ -27,10 +29,10 @@ namespace Uploader_Web.Controllers
         }
         public IActionResult PostFile()
         {
-            if (HttpContext.Session.GetString("token") == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
+            //if (HttpContext.Session.GetString("token") == null)
+            //{
+            //    return RedirectToAction("Login", "Auth");
+            //}
             return View();
         }
         [HttpPost]
@@ -77,7 +79,7 @@ namespace Uploader_Web.Controllers
 
                 }
             }
-            var json = JsonConvert.SerializeObject(excelFile);
+            string json = JsonConvert.SerializeObject(excelFile);
             try
             {
                 var content = new MultipartFormDataContent();
@@ -92,13 +94,30 @@ namespace Uploader_Web.Controllers
                 var result = res.IsSuccessStatusCode;
                 if (result)
                 {
-                    ViewBag.message = "successful";
 
-                    ViewBag.json = json;
+                     ViewBag.json = json;            
+                    
                     Console.WriteLine("done succesfully");
                     return View();
                 }
-               
+                else if (res.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    Console.WriteLine("Forbidden");
+                    return View();
+
+                }
+                else if (res.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    ViewBag.message = "Unauthorized action";
+                    Console.WriteLine("Unauthorized");
+                    return View();
+
+                }
+                else
+                {
+                    return View();
+
+                }
 
             }
             catch (Exception ex)
@@ -109,41 +128,67 @@ namespace Uploader_Web.Controllers
 
             }
 
-            return View();
         }
 
-        public IActionResult Store()
+ 
+        
+        public async Task<IActionResult> GetPost()
+        {
+            try
+            {
+                HttpResponseMessage res = await _client.GetAsync(_client.BaseAddress + "/Post/getFile");
+                string Content = await res.Content.ReadAsStringAsync();
+                JArray jsonResponse = JArray.Parse(Content);
+                if (res.IsSuccessStatusCode)
+                {
+
+                    ViewBag.PostData = jsonResponse;
+
+
+                    return View();
+                }
+               
+                else if (res.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    Console.WriteLine("Unauthorized");
+                    return View();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return View();
+            }
+            return View();
+
+        }
+
+        public IActionResult Delete()
         {
             return View();
         }
-        //public async Task<IActionResult> Store(string jsonData)
-        //{
-        //    try
-        //    {
-        //        var jsonString = jsonData;
-        //        StringContent content = new StringContent(jsonString, Encoding.UTF8, "application/json");
-        //        HttpResponseMessage res = _client.PostAsync(_client.BaseAddress + "/Post/postFile", content).Result;
-        //        if (res.IsSuccessStatusCode) 
-        //        {
-        //            ViewBag.message = "successful";
-                 
-        //            ViewBag.json = jsonData;
 
-        //            return View();
-        //        }
-        //        else
-        //        {
-        //            return View(jsonData);
-        //        }
-
-        //    }
-        //    catch (Exception ex) 
-        //    {
-        //        ViewBag.message = ex.Message.ToString();
-        //        return View();
-
-        //    }
-        //}
-
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser([FromBody] List<string> UserIds)
+        {
+            var data = JsonConvert.SerializeObject(UserIds);
+            //StringContent content = new StringContent(data, Encoding.UTF8, "application/json");
+            var idsString = string.Join(",", UserIds); // Convert the list of IDs to a comma-separated string
+            string url = $"{_client.BaseAddress}/Post/delete?UserId={idsString}";
+            HttpResponseMessage res = _client.DeleteAsync(url).Result;
+            Console.WriteLine(data);
+            if (res.IsSuccessStatusCode)
+            {
+                Console.WriteLine("successfully done");
+                return Ok();
+            }
+            else
+            {
+                Console.WriteLine("something went wrong");
+                return BadRequest("something went wrong");
+            }
+        }
     }
 }
